@@ -1,25 +1,24 @@
-def print_letters_by_frequency(text):
+from collections import Counter
+
+def print_letters_by_frequency_counter(text):
     """
-    按字符出现频率降序打印字母
+    使用Counter按字符出现频率降序打印字母
     
     参数:
     text -- 输入的字符串
     """
-    # 创建字典统计字符频率
-    char_count = {}
+    # 过滤出字母字符并转换为小写
+    letters = [char.lower() for char in text if char.isalpha()]
     
-    # 统计每个字符的出现次数
-    for char in text:
-        if char.isalpha():  # 只统计字母字符
-            char_lower = char.lower()  # 不区分大小写
-            char_count[char_lower] = char_count.get(char_lower, 0) + 1
-    
-    if not char_count:
+    if not letters:
         print("字符串中没有字母字符")
         return
     
+    # 使用Counter统计频率
+    char_counter = Counter(letters)
+    
     # 按频率降序排序，频率相同的按字母顺序排序
-    sorted_chars = sorted(char_count.items(), 
+    sorted_chars = sorted(char_counter.items(), 
                          key=lambda x: (-x[1], x[0]))
     
     # 打印结果
@@ -29,40 +28,33 @@ def print_letters_by_frequency(text):
     
     for char, count in sorted_chars:
         print(f"'{char}': 出现 {count} 次")
+        
+    # 可选：显示频率分布图
+    display_frequency_chart(sorted_chars)
 
-# 测试函数
-def test_frequency_analysis():
-    """测试频率分析函数"""
-    test_cases = [
+def display_frequency_chart(sorted_chars):
+    """显示简单的频率分布图"""
+    if not sorted_chars:
+        return
+    
+    max_count = sorted_chars[0][1]
+    print("\n频率分布图:")
+    print("-" * 20)
+    
+    for char, count in sorted_chars:
+        bar_length = int((count / max_count) * 20)  # 最大长度20
+        bar = '█' * bar_length
+        print(f"{char}: {bar} ({count})")
+
+# 测试Counter版本
+def test_counter_version():
+    """测试Counter版本"""
+    test_strings = [
         "Hello World",
-        "Programming is fun",
         "Mississippi",
-        "A man a plan a canal Panama",
-        "12345!!!",  # 没有字母的情况
-        "",  # 空字符串
-        "a"  # 单个字符
+        "The quick brown fox jumps over the lazy dog"
     ]
     
-    for test_case in test_cases:
+    for test_str in test_strings:
         print("\n" + "="*50)
-        print_letters_by_frequency(test_case)
-
-# 交互式版本
-def interactive_frequency_analysis():
-    """交互式频率分析"""
-    while True:
-        print("\n" + "="*50)
-        user_input = input("请输入要分析的字符串 (输入 'quit' 退出): ")
-        
-        if user_input.lower() == 'quit':
-            print("程序结束，再见！")
-            break
-        
-        print_letters_by_frequency(user_input)
-
-if __name__ == "__main__":
-    # 运行测试
-    test_frequency_analysis()
-    
-    # 运行交互式版本
-    interactive_frequency_analysis()
+        print_letters_by_frequency_counter(test_str)
