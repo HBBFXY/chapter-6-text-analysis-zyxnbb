@@ -1,60 +1,72 @@
 from collections import Counter
 
-def print_letters_by_frequency_counter(text):
+def detailed_frequency_analysis(text):
     """
-    使用Counter按字符出现频率降序打印字母
+    详细的频率分析，包含大小写区分版本
     
     参数:
     text -- 输入的字符串
     """
-    # 过滤出字母字符并转换为小写
-    letters = [char.lower() for char in text if char.isalpha()]
-    
-    if not letters:
-        print("字符串中没有字母字符")
+    if not text:
+        print("字符串为空")
         return
     
-    # 使用Counter统计频率
-    char_counter = Counter(letters)
+    # 版本1：不区分大小写
+    letters_lower = [char.lower() for char in text if char.isalpha()]
     
-    # 按频率降序排序，频率相同的按字母顺序排序
-    sorted_chars = sorted(char_counter.items(), 
-                         key=lambda x: (-x[1], x[0]))
+    # 版本2：区分大小写
+    letters_original = [char for char in text if char.isalpha()]
     
-    # 打印结果
-    print(f"字符串: '{text}'")
-    print("字母按频率降序排列:")
-    print("-" * 30)
+    print(f"原始字符串: '{text}'")
+    print("=" * 50)
     
-    for char, count in sorted_chars:
-        print(f"'{char}': 出现 {count} 次")
+    # 不区分大小写的分析
+    if letters_lower:
+        counter_lower = Counter(letters_lower)
+        sorted_lower = sorted(counter_lower.items(), 
+                            key=lambda x: (-x[1], x[0]))
         
-    # 可选：显示频率分布图
-    display_frequency_chart(sorted_chars)
-
-def display_frequency_chart(sorted_chars):
-    """显示简单的频率分布图"""
-    if not sorted_chars:
-        return
+        print("不区分大小写分析:")
+        print("-" * 25)
+        for char, count in sorted_lower:
+            percentage = (count / len(letters_lower)) * 100
+            print(f"'{char}': {count:2d} 次 ({percentage:5.1f}%)")
     
-    max_count = sorted_chars[0][1]
-    print("\n频率分布图:")
-    print("-" * 20)
+    # 区分大小写的分析
+    if letters_original:
+        counter_original = Counter(letters_original)
+        sorted_original = sorted(counter_original.items(), 
+                               key=lambda x: (-x[1], x[0]))
+        
+        print("\n区分大小写分析:")
+        print("-" * 25)
+        for char, count in sorted_original:
+            percentage = (count / len(letters_original)) * 100
+            print(f"'{char}': {count:2d} 次 ({percentage:5.1f}%)")
     
-    for char, count in sorted_chars:
-        bar_length = int((count / max_count) * 20)  # 最大长度20
-        bar = '█' * bar_length
-        print(f"{char}: {bar} ({count})")
+    # 统计信息
+    print("\n统计摘要:")
+    print("-" * 25)
+    print(f"总字符数: {len(text)}")
+    print(f"字母字符数: {len(letters_original)}")
+    print(f"不同字母数(不区分大小写): {len(set(letters_lower)) if letters_lower else 0}")
+    print(f"不同字母数(区分大小写): {len(set(letters_original)) if letters_original else 0}")
 
-# 测试Counter版本
-def test_counter_version():
-    """测试Counter版本"""
-    test_strings = [
+# 测试详细版本
+def test_detailed_analysis():
+    """测试详细分析版本"""
+    test_cases = [
         "Hello World",
-        "Mississippi",
-        "The quick brown fox jumps over the lazy dog"
+        "Python Programming",
+        "AaBbCc",  # 测试大小写区分
+        "123!@#",  # 无字母情况
+        ""  # 空字符串
     ]
     
-    for test_str in test_strings:
-        print("\n" + "="*50)
-        print_letters_by_frequency_counter(test_str)
+    for test_case in test_cases:
+        print("\n" + "="*60)
+        detailed_frequency_analysis(test_case)
+
+if __name__ == "__main__":
+    # 运行详细分析测试
+    test_detailed_analysis()
